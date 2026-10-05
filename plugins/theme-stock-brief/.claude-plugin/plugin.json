@@ -1,0 +1,9 @@
+{
+  "name": "theme-stock-brief",
+  "version": "0.1.0",
+  "description": "한국·미국 AI·양자·로봇 밸류체인 주간 분석 도구. 데이터 갱신, 인터랙티브 아티팩트 재게시, Gmail 초안 작성을 한 번에 실행합니다.",
+  "author": {
+    "name": "GlorisMoon"
+  },
+  "keywords": ["stocks", "ai", "quantum", "robotics", "weekly-report", "korea", "us"]
+}

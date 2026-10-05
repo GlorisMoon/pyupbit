@@ -1,0 +1,16 @@
+{
+  "artifacts": {
+    "kr": "https://claude.ai/artifact/WwE8dAS6qRba5jf6dUEde4",
+    "us": "https://claude.ai/artifact/NDb7B9vrstimnxTmeJHWPJ"
+  },
+  "branch": "claude/ai-quantum-robot-stocks-gilvs5",
+  "schedule": {
+    "description": "매주 월요일 06:49 (Asia/Seoul)",
+    "cron": "CRON_TZ=Asia/Seoul 49 6 * * 1",
+    "triggerId": ""
+  },
+  "email": {
+    "subjectPrefix": "[주간] AI·양자·로봇 테마 브리핑",
+    "recipients": "account-owner"
+  }
+}

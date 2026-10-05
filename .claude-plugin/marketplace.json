@@ -1,0 +1,14 @@
+{
+  "name": "glorismoon-tools",
+  "description": "GlorisMoon의 개인 분석 도구 모음",
+  "owner": {
+    "name": "GlorisMoon"
+  },
+  "plugins": [
+    {
+      "name": "theme-stock-brief",
+      "source": "./plugins/theme-stock-brief",
+      "description": "한국·미국 AI·양자·로봇 밸류체인 주간 분석, 아티팩트 재게시, Gmail 초안"
+    }
+  ]
+}
