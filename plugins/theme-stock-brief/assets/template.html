@@ -1,0 +1,705 @@
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a 1040px working column. Value-chain cards sit in a connected flow; a full-width dropdown opens under the clicked card's row. Macro and news sections pair a scannable matrix with a detail panel that the click fills. All content comes from the JSON block at the bottom. */
+:root {
+  --bg: #f3f4f6;
+  --surface: #ffffff;
+  --raised: #f8f9fb;
+  --ink: #11161d;
+  --ink-2: #4a5361;
+  --muted: #7b8390;
+  --line: #e2e5ea;
+  --base: #b3bac5;
+  --accent: #0f5c55;
+  --accent-wash: rgba(15, 92, 85, 0.08);
+  --series: #2a78d6;
+  --series-wash: rgba(42, 120, 214, 0.10);
+  --neg: #e34948;
+  --pos-text: #1c5cab;
+  --neg-text: #c0302f;
+  --up-bg: rgba(42, 120, 214, 0.12); --up-ink: #1c5cab;
+  --down-bg: rgba(208, 59, 59, 0.12); --down-ink: #b02a2a;
+  --mid-bg: rgba(123, 131, 144, 0.14); --mid-ink: #5a616c;
+  --h-p2: #256abf; --h-p2-ink: #ffffff;
+  --h-p1: #b7d3f6; --h-p1-ink: #0b2a52;
+  --h-0: #eef0f3;  --h-0-ink: #8a919c;
+  --h-n1: #f6c1bf; --h-n1-ink: #5a1414;
+  --h-n2: #d03b3b; --h-n2-ink: #ffffff;
+  --hover: rgba(17, 22, 29, 0.045);
+  --shadow: 0 10px 30px rgba(17, 22, 29, 0.10);
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1014; --surface: #161a20; --raised: #1b2027; --ink: #f1f3f6; --ink-2: #c1c7d0; --muted: #8b929d;
+    --line: #262b33; --base: #4a515c; --accent: #5ec4b6; --accent-wash: rgba(94, 196, 182, 0.12);
+    --series: #3987e5; --series-wash: rgba(57, 135, 229, 0.15); --neg: #e66767; --pos-text: #7fb3f0; --neg-text: #f08a8a;
+    --up-bg: rgba(57, 135, 229, 0.20); --up-ink: #8fbdf3;
+    --down-bg: rgba(230, 103, 103, 0.20); --down-ink: #f29a9a;
+    --mid-bg: rgba(139, 146, 157, 0.18); --mid-ink: #b3b9c2;
+    --h-p2: #3987e5; --h-p2-ink: #0b1626; --h-p1: #1c3f6e; --h-p1-ink: #d6e6fb;
+    --h-0: #222832; --h-0-ink: #8b929d; --h-n1: #5c2526; --h-n1-ink: #f7d4d3; --h-n2: #e66767; --h-n2-ink: #1c0b0b;
+    --hover: rgba(255, 255, 255, 0.05); --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1014; --surface: #161a20; --raised: #1b2027; --ink: #f1f3f6; --ink-2: #c1c7d0; --muted: #8b929d;
+  --line: #262b33; --base: #4a515c; --accent: #5ec4b6; --accent-wash: rgba(94, 196, 182, 0.12);
+  --series: #3987e5; --series-wash: rgba(57, 135, 229, 0.15); --neg: #e66767; --pos-text: #7fb3f0; --neg-text: #f08a8a;
+  --up-bg: rgba(57, 135, 229, 0.20); --up-ink: #8fbdf3;
+  --down-bg: rgba(230, 103, 103, 0.20); --down-ink: #f29a9a;
+  --mid-bg: rgba(139, 146, 157, 0.18); --mid-ink: #b3b9c2;
+  --h-p2: #3987e5; --h-p2-ink: #0b1626; --h-p1: #1c3f6e; --h-p1-ink: #d6e6fb;
+  --h-0: #222832; --h-0-ink: #8b929d; --h-n1: #5c2526; --h-n1-ink: #f7d4d3; --h-n2: #e66767; --h-n2-ink: #1c0b0b;
+  --hover: rgba(255, 255, 255, 0.05); --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.65; -webkit-font-smoothing: antialiased; word-break: keep-all; overflow-wrap: anywhere; }
+.page { max-width: 1040px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: grid; gap: 56px; }
+@media (max-width: 480px) { .page { padding-inline: 16px; padding-block: 28px 48px; gap: 44px; } }
+a { color: var(--accent); text-underline-offset: 2px; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+h2 { font-size: 22px; font-weight: 700; line-height: 1.35; }
+h3 { font-size: 16px; font-weight: 700; line-height: 1.4; }
+h4 { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.03em; }
+p { margin: 0; }
+ul, ol { margin: 0; }
+.eyebrow { font-family: var(--font-data); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.up { color: var(--pos-text); }
+.down { color: var(--neg-text); }
+.sec { display: grid; gap: 18px; min-width: 0; }
+.sec-head { display: grid; gap: 6px; }
+.sec-head .verdict { color: var(--ink-2); max-width: 72ch; }
+.foot { font-size: 12.5px; color: var(--muted); max-width: 84ch; }
+.hint { font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.hint b { color: var(--ink-2); font-weight: 600; }
+
+.tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; line-height: 1; padding: 4px 7px; border-radius: 5px; white-space: nowrap; }
+.tag.up { background: var(--up-bg); color: var(--up-ink); }
+.tag.down { background: var(--down-bg); color: var(--down-ink); }
+.tag.mid { background: var(--mid-bg); color: var(--mid-ink); }
+.tag.up::before { content: "▲"; font-size: 9px; }
+.tag.down::before { content: "▼"; font-size: 9px; }
+.tag.mid::before { content: "■"; font-size: 8px; }
+.badge { display: inline-block; font-family: var(--font-data); font-size: 11px; font-weight: 500; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--ink-2); background: var(--raised); white-space: nowrap; }
+.badge.lead { border-color: var(--accent); color: var(--accent); background: var(--accent-wash); font-family: var(--font-body); font-weight: 600; }
+.badge.priv { font-family: var(--font-body); }
+
+header.brief { display: grid; gap: 14px; }
+.brief .lead { font-size: 17px; color: var(--ink-2); max-width: 66ch; }
+.brief .lead strong { color: var(--ink); font-weight: 600; }
+.brief .meta-row { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted); align-items: center; }
+.brief .meta-row a { font-weight: 600; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; align-content: start; min-width: 0; }
+.tile .label { font-size: 12.5px; color: var(--ink-2); font-weight: 500; }
+.tile .value { font-family: var(--font-data); font-size: 22px; font-weight: 600; line-height: 1.25; }
+.tile .note { font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+.tabs { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; justify-self: start; }
+.tabs button { border: 0; background: transparent; padding: 8px 14px; border-radius: 7px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--ink-2); display: inline-flex; gap: 8px; align-items: baseline; }
+.tabs button small { font-family: var(--font-data); font-size: 11.5px; font-weight: 500; color: var(--muted); }
+.tabs button:hover { background: var(--hover); color: var(--ink); }
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--surface); }
+.tabs button[aria-selected="true"] small { color: var(--surface); opacity: 0.75; }
+
+.vc-desc { color: var(--ink-2); max-width: 76ch; font-size: 14.5px; }
+.vc-flow { position: relative; display: grid; grid-template-columns: repeat(auto-fill, minmax(205px, 1fr)); gap: 30px 34px; padding: 6px 2px; }
+@media (max-width: 480px) { .vc-flow { grid-template-columns: 1fr; gap: 26px; } }
+.vc-lines { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 0; }
+.vc-lines path { fill: none; stroke: var(--base); stroke-width: 1.5; }
+.vc-lines path.on { stroke: var(--accent); stroke-width: 2; }
+.vc-lines .ah { fill: var(--base); }
+.vc-lines .ah-on { fill: var(--accent); }
+.vc-card { position: relative; z-index: 1; text-align: left; cursor: pointer; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 14px 12px; display: grid; gap: 6px; align-content: start; min-width: 0; transition: border-color .15s, box-shadow .15s, transform .15s; }
+.vc-card:hover { border-color: var(--base); box-shadow: var(--shadow); transform: translateY(-1px); }
+.vc-card[aria-expanded="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow); }
+.vc-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.vc-no { font-family: var(--font-data); font-weight: 600; font-size: 12.5px; color: var(--accent); width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--accent); display: grid; place-items: center; background: var(--surface); }
+.vc-card[aria-expanded="true"] .vc-no { background: var(--accent); color: var(--surface); }
+.phase { font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap; }
+.phase.ph-real { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.phase.ph-order { border-color: var(--ink); color: var(--ink); }
+.phase.ph-hope { border-style: dashed; }
+.phase.ph-policy { background: var(--accent-wash); border-color: var(--accent); color: var(--accent); }
+.vc-card h3 { font-size: 15.5px; }
+.vc-role { font-size: 12.5px; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.vc-leads { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.vc-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11.5px; color: var(--muted); font-family: var(--font-data); border-top: 1px solid var(--line); padding-top: 8px; margin-top: 2px; }
+.vc-meta .chev { font-family: var(--font-body); font-size: 12px; color: var(--accent); font-weight: 600; }
+
+.vc-panel { grid-column: 1 / -1; position: relative; z-index: 2; background: var(--surface); border: 1px solid var(--accent); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; display: grid; gap: 14px; margin-top: -14px; min-width: 0; }
+.vc-panel .caret { position: absolute; top: -8px; width: 14px; height: 14px; background: var(--surface); border-left: 1px solid var(--accent); border-top: 1px solid var(--accent); transform: rotate(45deg); }
+.vp-head { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+.vp-head .t { display: grid; gap: 2px; }
+.vp-head p { color: var(--ink-2); font-size: 14px; max-width: 80ch; }
+.vp-close { border: 1px solid var(--line); background: var(--raised); border-radius: 7px; padding: 5px 10px; font-size: 12.5px; cursor: pointer; color: var(--ink-2); white-space: nowrap; }
+.vp-close:hover { color: var(--ink); border-color: var(--base); }
+.vp-grid { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr) minmax(0, 1.1fr); gap: 18px; }
+@media (max-width: 860px) { .vp-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .vp-news { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .vp-grid { grid-template-columns: minmax(0, 1fr); } }
+.vp-col { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.co-list { list-style: none; padding: 0; display: grid; gap: 4px; }
+.co-btn { width: 100%; text-align: left; cursor: pointer; border: 1px solid transparent; background: var(--raised); border-radius: 8px; padding: 8px 10px; display: grid; gap: 1px; }
+.co-btn .nm { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-weight: 600; font-size: 14px; }
+.co-btn .nm .yt { margin-left: auto; font-family: var(--font-data); font-size: 12px; font-weight: 600; }
+.co-btn .rl { font-size: 12px; color: var(--muted); }
+.co-btn:hover, .co-btn[aria-current="true"] { border-color: var(--accent); background: var(--accent-wash); }
+.ci { background: var(--raised); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 10px; align-content: start; min-height: 100%; }
+.ci-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ci-head h3 { font-size: 18px; margin-right: 4px; }
+.ci-role { font-size: 13.5px; color: var(--ink-2); }
+.ci ul:not(.news-list) { padding-left: 1.1em; display: grid; gap: 5px; font-size: 13.5px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 6px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 6px 8px; display: grid; gap: 0; }
+.kpi b { font-family: var(--font-data); font-size: 14px; }
+.kpi span { font-size: 11px; color: var(--muted); }
+.src { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.src a { font-size: 12px; }
+.news-list { list-style: none; padding: 0; display: grid; gap: 6px; font-size: 13.5px; }
+.news-list li { display: flex; gap: 8px; align-items: baseline; }
+.cases { list-style: none; padding: 0; display: grid; gap: 8px; font-size: 13px; }
+.cases li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; padding-left: 10px; border-left: 2px solid var(--line); }
+.cases li.cu { border-left-color: var(--series); }
+.cases li.cd { border-left-color: var(--neg); }
+.cases .d { font-family: var(--font-data); font-weight: 600; font-size: 12px; color: var(--ink); white-space: nowrap; }
+.cases .s { grid-column: 2; }
+.vlinks { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; color: var(--muted); }
+.vlinks button, .vlinks a { border: 1px dashed var(--accent); background: transparent; color: var(--accent); border-radius: 999px; padding: 3px 10px; font-size: 12px; cursor: pointer; text-decoration: none; }
+.vlinks button:hover, .vlinks a:hover { background: var(--accent-wash); }
+
+.scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.score { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 6px; cursor: pointer; text-align: left; min-width: 0; }
+.score:hover { border-color: var(--base); }
+.score[aria-pressed="true"] { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+.score .row1 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.score .gname { font-size: 13.5px; font-weight: 600; }
+.score .sv { font-family: var(--font-data); font-weight: 600; font-size: 18px; }
+.score .bar { position: relative; height: 12px; border-radius: 3px; background: var(--raised); border: 1px solid var(--line); overflow: hidden; }
+.score .bar i { position: absolute; top: 0; bottom: 0; border-radius: 2px; }
+.score .bar i.p { background: var(--series); }
+.score .bar i.n { background: var(--neg); }
+.score .bar b { position: absolute; top: -2px; bottom: -2px; left: 50%; width: 1px; background: var(--ink-2); }
+.score .verd { font-size: 12px; color: var(--muted); }
+.mx-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+table.mx { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 860px; font-size: 13px; }
+.mx th { font-size: 12px; font-weight: 600; color: var(--muted); text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--line); background: var(--raised); white-space: nowrap; }
+.mx th.g { text-align: center; }
+.mx td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.mx tr:last-child td { border-bottom: 0; }
+.mx tr.sel td { background: var(--accent-wash); }
+.mx .ind { cursor: pointer; border: 0; background: transparent; text-align: left; padding: 0; display: grid; gap: 1px; }
+.mx .ind b { font-size: 13.5px; }
+.mx .ind span { font-size: 11.5px; color: var(--muted); }
+.mx .now { font-family: var(--font-data); font-weight: 600; font-size: 13.5px; white-space: nowrap; }
+.mx .now small { display: block; font-family: var(--font-body); font-weight: 400; font-size: 11px; color: var(--muted); white-space: normal; max-width: 150px; }
+.mx td.c { text-align: center; padding: 6px; }
+.mxc { cursor: pointer; border: 0; width: 100%; min-width: 120px; border-radius: 7px; padding: 7px 6px; display: grid; gap: 3px; justify-items: center; }
+.mxc .tg { font-size: 12px; font-weight: 700; }
+.mxc .dots { font-family: var(--font-data); font-size: 10px; letter-spacing: 2px; opacity: 0.85; }
+.mxc[data-v="3"], .mxc[data-v="2"] { background: var(--h-p2); color: var(--h-p2-ink); }
+.mxc[data-v="1"] { background: var(--h-p1); color: var(--h-p1-ink); }
+.mxc[data-v="0"] { background: var(--h-0); color: var(--h-0-ink); }
+.mxc[data-v="-1"] { background: var(--h-n1); color: var(--h-n1-ink); }
+.mxc[data-v="-2"], .mxc[data-v="-3"] { background: var(--h-n2); color: var(--h-n2-ink); }
+.mx.focus-col td.c:not(.fc) .mxc { opacity: 0.35; }
+.mxc.on, td[data-v].on { outline: 2px solid var(--ink); outline-offset: 1px; }
+.spark { display: block; }
+.spark .ln { fill: none; stroke: var(--series); stroke-width: 1.5; stroke-linejoin: round; }
+.spark .dt { fill: var(--series); }
+
+.detail { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 14px; min-width: 0; scroll-margin-top: 16px; }
+.d-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: start; }
+.d-head .t { display: grid; gap: 3px; }
+.d-head h3 { font-size: 19px; }
+.d-head .sub { font-size: 13px; color: var(--ink-2); }
+.d-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr); gap: 18px; }
+@media (max-width: 860px) { .d-grid { grid-template-columns: minmax(0, 1fr); } }
+.d-col { display: grid; gap: 10px; align-content: start; min-width: 0; }
+ol.path { list-style: none; padding: 0; display: grid; gap: 0; counter-reset: p; }
+ol.path li { position: relative; padding: 0 0 14px 30px; font-size: 13.5px; color: var(--ink-2); counter-increment: p; }
+ol.path li::before { content: counter(p); position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); font-family: var(--font-data); font-size: 11px; font-weight: 600; display: grid; place-items: center; }
+ol.path li:not(:last-child)::after { content: ""; position: absolute; left: 10px; top: 22px; bottom: 2px; width: 1px; background: var(--accent); opacity: 0.5; }
+.effects { display: grid; gap: 8px; }
+.eff { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; align-items: start; }
+.eff .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); background: var(--raised); white-space: nowrap; }
+.chip b { font-family: var(--font-data); margin-left: 4px; }
+.grp-eff { display: grid; gap: 8px; }
+.grp-eff .r { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 4px 10px; align-items: start; font-size: 13px; }
+.grp-eff .r .n { font-weight: 600; }
+.grp-eff .r p { grid-column: 2; color: var(--ink-2); font-size: 12.5px; }
+.note { font-size: 12.5px; color: var(--muted); border-left: 2px solid var(--line); padding-left: 8px; }
+.stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.stat { background: var(--raised); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: grid; gap: 1px; }
+.stat b { font-family: var(--font-data); font-size: 17px; }
+.stat span { font-size: 11.5px; color: var(--muted); }
+.dchart { position: relative; }
+.dchart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.dchart text { font-family: var(--font-data); }
+.g-grid { stroke: var(--line); stroke-width: 1; }
+.g-zero { stroke: var(--base); stroke-width: 1; }
+.g-event { stroke: var(--base); stroke-width: 1; }
+.t-tick { fill: var(--muted); font-size: 10.5px; }
+.t-lab { fill: var(--ink-2); font-size: 11px; font-family: var(--font-body) !important; }
+.t-val { fill: var(--ink-2); font-size: 11px; font-weight: 600; }
+.lc-ln { fill: none; stroke: var(--series); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.lc-ar { fill: var(--series-wash); }
+.lc-dot { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
+.lc-cross { stroke: var(--base); stroke-width: 1; }
+.bar-p { fill: var(--series); }
+.bar-n { fill: var(--neg); }
+
+.hm-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink-2); align-items: center; }
+.hm-legend i { display: inline-grid; place-items: center; width: 28px; height: 20px; border-radius: 4px; font-style: normal; font-family: var(--font-data); font-weight: 600; font-size: 12px; margin-right: 4px; vertical-align: middle; }
+.hm-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+table.hm { border-collapse: separate; border-spacing: 3px; width: 100%; min-width: 860px; font-size: 13px; padding: 8px; }
+.hm th { font-weight: 600; font-size: 12px; color: var(--ink-2); text-align: center; padding: 6px 2px; vertical-align: bottom; line-height: 1.35; white-space: nowrap; }
+.hm th.grp { font-size: 11.5px; color: var(--muted); border-bottom: 1px solid var(--line); }
+.hm th.rowh { text-align: left; padding: 2px 8px 2px 2px; min-width: 200px; white-space: normal; }
+.hm th.rowh button { border: 0; background: transparent; padding: 4px 2px; text-align: left; cursor: pointer; font-weight: 600; color: var(--ink); font-size: 13px; }
+.hm th.rowh button:hover { color: var(--accent); }
+.hm tr.sel th.rowh button { color: var(--accent); }
+.hm tr.sel th.rowh button::before { content: "▸ "; }
+.hm th.band { text-align: left; font-size: 12px; color: var(--accent); padding-top: 14px; white-space: normal; }
+.hm td { width: 62px; height: 40px; text-align: center; border-radius: 6px; font-family: var(--font-data); font-weight: 600; font-size: 14px; cursor: pointer; }
+.hm td[data-v="2"] { background: var(--h-p2); color: var(--h-p2-ink); }
+.hm td[data-v="1"] { background: var(--h-p1); color: var(--h-p1-ink); }
+.hm td[data-v="0"] { background: var(--h-0); color: var(--h-0-ink); }
+.hm td[data-v="-1"] { background: var(--h-n1); color: var(--h-n1-ink); }
+.hm td[data-v="-2"] { background: var(--h-n2); color: var(--h-n2-ink); }
+.hm td:hover { filter: brightness(0.95); }
+
+.regime { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.reg { border-top: 2px solid var(--ink); padding-top: 10px; display: grid; gap: 4px; align-content: start; justify-items: start; }
+.reg h3 { font-size: 15px; }
+.reg p { font-size: 13.5px; color: var(--ink-2); }
+.cal { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.cal div { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 2px; min-width: 0; }
+.cal .d { font-family: var(--font-data); font-weight: 600; font-size: 13px; }
+.cal .w { font-size: 13px; color: var(--ink-2); }
+
+.tip { position: fixed; z-index: 50; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 9px; padding: 9px 11px; font-size: 12.5px; line-height: 1.55; max-width: 300px; display: grid; gap: 4px; }
+.tip .k { color: var(--muted); font-size: 11.5px; }
+.sources { font-size: 12.5px; color: var(--ink-2); display: grid; gap: 8px; }
+.sources ul { padding-left: 1.1em; columns: 2 280px; column-gap: 28px; }
+.sources li { break-inside: avoid; margin-bottom: 3px; }
+.disclaimer { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main class="page">
+  <header class="brief">
+    <div class="eyebrow" id="m-eyebrow"></div>
+    <h1 id="m-title"></h1>
+    <p class="lead" id="m-lead"></p>
+    <div class="meta-row" id="m-meta"></div>
+  </header>
+
+  <section class="sec" aria-labelledby="temp-h">
+    <h2 id="temp-h" class="eyebrow">시장 온도</h2>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <section class="sec" aria-labelledby="vc-h">
+    <div class="sec-head">
+      <div class="eyebrow">밸류체인 탐색</div>
+      <h2 id="vc-h">구간 카드를 눌러 관련 기업과 뉴스를 펼쳐 보세요</h2>
+    </div>
+    <div class="tabs" role="tablist" aria-label="테마 선택" id="tabs"></div>
+    <p class="vc-desc" id="vc-desc"></p>
+    <div class="hint"><span><b>클릭</b> 카드 펼치기·접기</span><span><b>기업에 마우스</b> 기업 정보 보기</span><span><b>점선 버튼</b> 연결된 구간으로 이동</span></div>
+    <div class="vc-flow" id="vc-flow"></div>
+  </section>
+
+  <section class="sec" aria-labelledby="mc-h">
+    <div class="sec-head">
+      <div class="eyebrow">거시 지표 영향</div>
+      <h2 id="mc-h">지금 지표는 순풍인가, 역풍인가</h2>
+      <p class="verdict">지표마다 현재 방향이 각 테마에 상승기여인지 하락원인으로예상되는지 표시했습니다. 위 막대는 그 합계입니다. 칸에 마우스를 올리면 이유가, 클릭하면 아래에 추이와 근거가 나옵니다.</p>
+    </div>
+    <div class="scores" id="scores"></div>
+    <div class="mx-wrap"><table class="mx" id="mx"></table></div>
+    <div class="detail" id="mx-detail" aria-live="polite"></div>
+    <p class="foot">강도 점(●)은 클대리의 정성 평가입니다. 실제 주가 반응과 일반적인 전달 경로를 함께 보고 매겼습니다.</p>
+  </section>
+
+  <section class="sec" aria-labelledby="hm-h">
+    <div class="sec-head">
+      <div class="eyebrow">뉴스 영향 지도</div>
+      <h2 id="hm-h">어떤 뉴스에 어느 구간이 움직이나</h2>
+      <p class="verdict">칸에 마우스를 올리면 요약이, 칸이나 뉴스 이름을 클릭하면 전달 경로와 근거가 아래에 나옵니다.</p>
+    </div>
+    <div class="hm-legend" aria-hidden="true">
+      <span><i style="background:var(--h-p2);color:var(--h-p2-ink)">++</i>강한 상승기여</span>
+      <span><i style="background:var(--h-p1);color:var(--h-p1-ink)">+</i>상승기여</span>
+      <span><i style="background:var(--h-0);color:var(--h-0-ink)">·</i>영향 작음</span>
+      <span><i style="background:var(--h-n1);color:var(--h-n1-ink)">−</i>하락원인으로예상</span>
+      <span><i style="background:var(--h-n2);color:var(--h-n2-ink)">−−</i>강한 하락원인으로예상</span>
+    </div>
+    <div class="hm-wrap"><table class="hm" id="hm"></table></div>
+    <div class="detail" id="hm-detail" aria-live="polite"></div>
+  </section>
+
+  <section class="sec" aria-labelledby="rg-h">
+    <div class="sec-head"><div class="eyebrow">지금 국면 진단</div><h2 id="rg-h">이번 주 정리</h2></div>
+    <div class="regime" id="regime"></div>
+    <div class="cal" id="cal"></div>
+  </section>
+
+  <section class="sources" aria-labelledby="src-h">
+    <h2 id="src-h" class="eyebrow">출처 전체</h2>
+    <ul id="src-list"></ul>
+  </section>
+
+  <p class="disclaimer" id="disclaimer"></p>
+</main>
+<div class="tip" id="tip" hidden></div>
+
+<script id="tool-data" type="application/json">/*__DATA__*/</script>
+<script>
+(function () {
+  "use strict";
+  const D = JSON.parse(document.getElementById("tool-data").textContent);
+  const SRC = D.sources;
+  const usedSrc = new Set();
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const srcLinks = keys => (keys || []).filter(k => SRC[k]).map(k => { usedSrc.add(k); return "<a href=\"" + esc(SRC[k][1]) + "\" target=\"_blank\" rel=\"noopener\">" + esc(SRC[k][0]) + "</a>"; }).join("");
+  const TAGTXT = { up: "상승기여", down: "하락원인으로예상", mid: "중립·관망" };
+  const tagHtml = t => "<span class=\"tag " + t + "\">" + TAGTXT[t] + "</span>";
+  const sgn = v => v > 0 ? "up" : v < 0 ? "down" : "mid";
+  const pct = v => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
+  const cls = v => v > 0 ? "up" : v < 0 ? "down" : "";
+  const RM = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+
+  // ---------- header ----------
+  document.getElementById("m-eyebrow").textContent = D.meta.eyebrow;
+  document.getElementById("m-title").textContent = D.meta.title;
+  document.getElementById("m-lead").innerHTML = D.meta.lead; // authored content, may contain <strong>
+  document.getElementById("m-meta").innerHTML = "<span>데이터 기준 " + esc(D.meta.asOf) + "</span><span>업데이트 " + esc(D.meta.updated) + "</span>" +
+    (D.meta.schedule ? "<span>" + esc(D.meta.schedule) + "</span>" : "") +
+    (D.meta.sibling ? "<a href=\"" + esc(D.meta.sibling.url) + "\" target=\"_blank\" rel=\"noopener\">" + esc(D.meta.sibling.label) + " →</a>" : "");
+  document.getElementById("temp-h").textContent = D.meta.tilesTitle || "시장 온도";
+  document.getElementById("tiles").innerHTML = D.tiles.map(t => "<div class=\"tile\"><span class=\"label\">" + esc(t.label) + "</span><span class=\"value " + (t.dir || "") + "\">" + esc(t.value) + "</span><span class=\"note\">" + esc(t.note) + "</span></div>").join("");
+  document.getElementById("regime").innerHTML = D.regime.map(r => "<div class=\"reg\">" + tagHtml(r.tag) + "<h3>" + esc(r.h) + "</h3><p>" + esc(r.p) + "</p></div>").join("");
+  document.getElementById("cal").innerHTML = D.calendar.map(c => "<div><span class=\"d\">" + esc(c.d) + "</span><span class=\"w\">" + esc(c.w) + "</span></div>").join("");
+  document.getElementById("disclaimer").textContent = D.disclaimer;
+
+  // ---------- tooltip ----------
+  const tip = document.getElementById("tip");
+  function showTip(el, html) {
+    tip.innerHTML = html; tip.hidden = false;
+    const r = el.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+    let left = r.left + r.width / 2 - tw / 2; left = Math.max(8, Math.min(left, innerWidth - tw - 8));
+    let top = r.bottom + 8; if (top + th > innerHeight - 8) top = r.top - th - 8;
+    tip.style.left = left + "px"; tip.style.top = Math.max(8, top) + "px";
+  }
+  const hideTip = () => { tip.hidden = true; };
+  addEventListener("scroll", hideTip, { passive: true });
+  const casesHtml = cs => !cs || !cs.length ? "<p class=\"note\">조사 기간 중 개별 사례가 확인되지 않았습니다.</p>" :
+    "<ul class=\"cases\">" + cs.map(c => "<li class=\"" + (c.g === "up" ? "cu" : c.g === "down" ? "cd" : "") + "\"><span class=\"d\">" + esc(c.d) + "</span><span>" + (c.g ? tagHtml(c.g) + " " : "") + esc(c.t) + "</span><span class=\"s src\">" + srcLinks(c.s) + "</span></li>").join("") + "</ul>";
+  const pathHtml = p => "<ol class=\"path\">" + (p || []).map(x => "<li>" + esc(x) + "</li>").join("") + "</ol>";
+
+  // ---------- value chains ----------
+  const PH = { real: ["ph-real", "실적 확인"], order: ["ph-order", "수주 확인"], hope: ["ph-hope", "기대 선반영"], policy: ["ph-policy", "정책 주도"] };
+  const THEMES = D.themes;
+  const tabsEl = document.getElementById("tabs"), flow = document.getElementById("vc-flow"), descEl = document.getElementById("vc-desc");
+  const state = { th: THEMES[0].id, open: 0, co: 0 };
+  tabsEl.innerHTML = THEMES.map(t => "<button role=\"tab\" id=\"tab-" + t.id + "\" data-th=\"" + t.id + "\">" + esc(t.name) + "<small>" + t.stages.length + "단계</small></button>").join("");
+  tabsEl.addEventListener("click", e => { const b = e.target.closest("button[data-th]"); if (b) { state.th = b.dataset.th; state.open = 0; state.co = 0; renderFlow(); } });
+  const theme = () => THEMES.find(t => t.id === state.th);
+
+  function renderFlow() {
+    const T = theme();
+    tabsEl.querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.th === T.id)));
+    descEl.textContent = T.desc;
+    flow.innerHTML = "<svg class=\"vc-lines\" aria-hidden=\"true\"><defs><marker id=\"ah\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ah\" d=\"M0,1 L9,5 L0,9 Z\"/></marker><marker id=\"ah-on\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path class=\"ah-on\" d=\"M0,1 L9,5 L0,9 Z\"/></marker></defs><g></g></svg>" +
+      T.stages.map((s, i) => {
+        const leads = s.co.filter(c => c.lead).map(c => c.n).join(" · ") || s.co[0].n;
+        return "<button class=\"vc-card\" data-i=\"" + i + "\" aria-expanded=\"" + (state.open === i) + "\">" +
+          "<div class=\"vc-top\"><span class=\"vc-no\">" + (i + 1) + "</span><span class=\"phase " + PH[s.ph][0] + "\">" + PH[s.ph][1] + "</span></div>" +
+          "<h3>" + esc(s.n) + "</h3><p class=\"vc-role\">" + esc(s.role) + "</p><div class=\"vc-leads\">" + esc(leads) + "</div>" +
+          "<div class=\"vc-meta\"><span>기업 " + s.co.length + " · 뉴스 " + s.news.length + "</span><span class=\"chev\">" + (state.open === i ? "접기 ▴" : "펼치기 ▾") + "</span></div></button>";
+      }).join("");
+    placePanel();
+  }
+
+  function companyInfo(s, c) {
+    const badges = (c.c ? "<span class=\"badge\">" + esc(c.c) + "</span>" : "") + (c.m ? "<span class=\"badge\">" + esc(c.m) + "</span>" : "") +
+      (c.priv ? "<span class=\"badge priv\">비상장</span>" : "") + (c.org ? "<span class=\"badge priv\">기관·정책</span>" : "") + (c.lead ? "<span class=\"badge lead\">대장</span>" : "");
+    let h = "<div class=\"ci-head\"><h3>" + esc(c.n) + "</h3>" + badges + "</div><p class=\"ci-role\">" + esc(c.r) + "</p>";
+    if (c.k) {
+      const k = c.k, cells = [];
+      if (k.px != null) cells.push(["종가", esc(k.px)]);
+      if (k.ytd != null) cells.push(["연초 이후", "<span class=\"" + cls(k.ytd) + "\">" + pct(k.ytd) + "</span>"]);
+      if (k.w4 != null) cells.push(["최근 4주", "<span class=\"" + cls(k.w4) + "\">" + pct(k.w4) + "</span>"]);
+      if (k.rank != null) cells.push(["Zacks Rank", String(k.rank)]);
+      if (k.val) cells.push([k.valL || "밸류에이션", esc(k.val)]);
+      h += "<div class=\"kpis\">" + cells.map(x => "<div class=\"kpi\"><b>" + x[1] + "</b><span>" + x[0] + "</span></div>").join("") + "</div>";
+    }
+    if (c.p && c.p.length) h += "<ul>" + c.p.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>";
+    const ups = s.news.filter(n => n[0] === "up").slice(0, 2), downs = s.news.filter(n => n[0] === "down").slice(0, 2);
+    h += "<h4>이 기업이 반응하는 뉴스</h4><ul class=\"news-list\" style=\"font-size:12.5px\">" + ups.concat(downs).map(n => "<li>" + tagHtml(n[0]) + "<span>" + esc(n[1]) + "</span></li>").join("") + "</ul>";
+    if (c.s && c.s.length) h += "<div class=\"src\">근거 " + srcLinks(c.s) + "</div>";
+    else h += "<div class=\"src\">대표 사업 기준 분류. 조사 기간 중 개별 뉴스는 확인되지 않았습니다.</div>";
+    return h;
+  }
+
+  function placePanel() {
+    const T = theme(), cards = [...flow.querySelectorAll(".vc-card")];
+    const old = flow.querySelector(".vc-panel"); if (old) old.remove();
+    if (state.open != null && cards[state.open]) {
+      const s = T.stages[state.open], card = cards[state.open];
+      const rowTop = card.offsetTop; let last = card;
+      cards.forEach(c => { if (Math.abs(c.offsetTop - rowTop) < 4 && +c.dataset.i > +last.dataset.i) last = c; });
+      const pn = document.createElement("div"); pn.className = "vc-panel"; pn.setAttribute("role", "region"); pn.setAttribute("aria-label", s.n + " 상세");
+      const links = (s.links || []).map(l => l.url
+        ? "<a href=\"" + esc(l.url) + "\" target=\"_blank\" rel=\"noopener\">" + esc(l.l) + " ↗</a>"
+        : "<button type=\"button\" data-th=\"" + l.th + "\" data-i=\"" + l.i + "\">" + esc(l.l) + " →</button>").join("");
+      pn.innerHTML = "<span class=\"caret\"></span>" +
+        "<div class=\"vp-head\"><div class=\"t\"><span class=\"eyebrow\">" + esc(T.name) + " · " + (state.open + 1) + "단계 · " + PH[s.ph][1] + "</span><h3>" + esc(s.n) + "</h3><p>" + esc(s.role) + "</p></div><button type=\"button\" class=\"vp-close\">접기 ✕</button></div>" +
+        "<div class=\"vp-grid\">" +
+          "<div class=\"vp-col\"><h4>관련 기업 · 마우스를 올리면 정보</h4><ul class=\"co-list\">" + s.co.map((c, ci) =>
+            "<li><button type=\"button\" class=\"co-btn\" data-ci=\"" + ci + "\" aria-current=\"" + (ci === state.co) + "\"><span class=\"nm\">" + esc(c.n) + (c.lead ? " <span class=\"badge lead\">대장</span>" : "") + (c.priv ? " <span class=\"badge priv\">비상장</span>" : "") + (c.org ? " <span class=\"badge priv\">기관</span>" : "") +
+            (c.k && c.k.ytd != null ? "<span class=\"yt " + cls(c.k.ytd) + "\">" + pct(c.k.ytd) + "</span>" : "") + "</span><span class=\"rl\">" + esc(c.r) + "</span></button></li>").join("") + "</ul>" +
+            (s.co.some(c => c.k && c.k.ytd != null) ? "<p class=\"foot\">오른쪽 숫자는 연초 이후 수익률</p>" : "") + "</div>" +
+          "<div class=\"vp-col\"><div class=\"ci\" id=\"ci\">" + companyInfo(s, s.co[state.co] || s.co[0]) + "</div></div>" +
+          "<div class=\"vp-col vp-news\"><h4>주가를 움직이는 뉴스</h4><ul class=\"news-list\">" + s.news.map(n => "<li>" + tagHtml(n[0]) + "<span>" + esc(n[1]) + "</span></li>").join("") + "</ul>" +
+            "<h4>실제 사례</h4>" + casesHtml(s.cases) + (links ? "<div class=\"vlinks\">연결된 구간 " + links + "</div>" : "") + "</div>" +
+        "</div>";
+      last.after(pn);
+      const caret = pn.querySelector(".caret");
+      caret.style.left = Math.max(14, card.offsetLeft - pn.offsetLeft + card.offsetWidth / 2 - 7) + "px";
+      const ciEl = pn.querySelector("#ci");
+      const pick = btn => { state.co = +btn.dataset.ci; pn.querySelectorAll(".co-btn").forEach(b => b.setAttribute("aria-current", String(b === btn))); ciEl.innerHTML = companyInfo(s, s.co[state.co]); };
+      pn.querySelectorAll(".co-btn").forEach(b => { b.addEventListener("mouseenter", () => pick(b)); b.addEventListener("focus", () => pick(b)); b.addEventListener("click", () => pick(b)); });
+      pn.querySelector(".vp-close").addEventListener("click", () => { state.open = null; renderFlow(); });
+      pn.querySelectorAll(".vlinks button").forEach(b => b.addEventListener("click", () => {
+        state.th = b.dataset.th; state.open = +b.dataset.i; state.co = 0; renderFlow();
+        document.getElementById("vc-h").scrollIntoView({ behavior: RM, block: "start" });
+      }));
+    }
+    drawLines();
+  }
+
+  function drawLines() {
+    const svg = flow.querySelector(".vc-lines"); if (!svg) return;
+    const g = svg.querySelector("g"), cards = [...flow.querySelectorAll(".vc-card")];
+    svg.setAttribute("width", flow.clientWidth); svg.setAttribute("height", flow.scrollHeight);
+    let d = "";
+    for (let i = 0; i < cards.length - 1; i++) {
+      const a = cards[i], b = cards[i + 1];
+      const ax = a.offsetLeft, ay = a.offsetTop, aw = a.offsetWidth, ah = a.offsetHeight;
+      const bx = b.offsetLeft, by = b.offsetTop, bh = b.offsetHeight, bw = b.offsetWidth;
+      const on = state.open === i || state.open === i + 1;
+      let p;
+      if (Math.abs(ay - by) < 4) {
+        const x1 = ax + aw + 2, y1 = ay + ah / 2, x2 = bx - 4, y2 = by + bh / 2, mx = (x1 + x2) / 2;
+        p = "M" + x1 + "," + y1 + " C" + mx + "," + y1 + " " + mx + "," + y2 + " " + x2 + "," + y2;
+      } else {
+        const x1 = ax + aw / 2, y1 = ay + ah + 2, x2 = bx + bw / 2, y2 = by - 4, dy = Math.max(18, (y2 - y1) * 0.55);
+        p = "M" + x1 + "," + y1 + " C" + x1 + "," + (y1 + dy) + " " + x2 + "," + (y2 - dy) + " " + x2 + "," + y2;
+      }
+      d += "<path d=\"" + p + "\" class=\"" + (on ? "on" : "") + "\" marker-end=\"url(#" + (on ? "ah-on" : "ah") + ")\"/>";
+    }
+    g.innerHTML = d;
+  }
+  flow.addEventListener("click", e => {
+    const card = e.target.closest(".vc-card"); if (!card) return;
+    const i = +card.dataset.i; state.open = state.open === i ? null : i; state.co = 0; renderFlow();
+  });
+  let lastW = flow.clientWidth, raf = 0;
+  new ResizeObserver(() => { if (flow.clientWidth === lastW) return; lastW = flow.clientWidth; cancelAnimationFrame(raf); raf = requestAnimationFrame(placePanel); }).observe(flow);
+  renderFlow();
+
+  // ---------- charts ----------
+  const NS = "http://www.w3.org/2000/svg";
+  const M = D.macro, MONTHS = M.months, EVENTS = M.events, GROUPS = M.groups, INDS = M.inds;
+  function el(tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
+  function niceStep(span, target) { const raw = span / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p; return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p; }
+  const fmtV = (ind, x) => ind.unit === "$" ? "$" + x.toFixed(ind.dec) : ind.unit === "%" ? x.toFixed(ind.dec) + "%" : ind.unit === "원" ? x.toLocaleString("ko-KR", { minimumFractionDigits: ind.dec, maximumFractionDigits: ind.dec }) + "원" : x.toFixed(ind.dec);
+  function sparkline(ind) {
+    const W = 92, H = 30, vals = ind.series.filter(v => v != null), lo = Math.min(...vals), hi = Math.max(...vals);
+    const sx = i => 2 + i / (ind.series.length - 1) * (W - 6), sy = v => 3 + (1 - (v - lo) / ((hi - lo) || 1)) * (H - 6);
+    const pts = ind.series.map((v, i) => v == null ? null : sx(i) + "," + sy(v)).filter(Boolean);
+    const li = ind.series.reduce((a, v, i) => v != null ? i : a, 0);
+    return "<svg class=\"spark\" width=\"" + W + "\" height=\"" + H + "\" viewBox=\"0 0 " + W + " " + H + "\" aria-hidden=\"true\"><polyline class=\"ln\" points=\"" + pts.join(" ") + "\"/><circle class=\"dt\" cx=\"" + sx(li) + "\" cy=\"" + sy(ind.series[li]) + "\" r=\"2.6\"/></svg>";
+  }
+  function lineChart(host, ind) {
+    const W = Math.max(260, host.clientWidth), H = 190, padL = 46, padR = 12, padT = 22, padB = 24;
+    const vals = ind.series.filter(v => v != null); let lo = Math.min(...vals), hi = Math.max(...vals);
+    const pad = (hi - lo) * 0.1 || Math.abs(hi) * 0.02 || 0.2; lo -= pad; hi += pad;
+    const step = niceStep(hi - lo, 4);
+    const sx = i => padL + i / (MONTHS.length - 1) * (W - padL - padR), sy = v => padT + (1 - (v - lo) / (hi - lo)) * (H - padT - padB);
+    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img", "aria-label": ind.chartTitle });
+    const dec = step < 0.05 ? 3 : step < 0.5 ? 2 : step < 5 ? 1 : 0;
+    for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) {
+      svg.appendChild(el("line", { x1: padL, x2: W - padR, y1: sy(v), y2: sy(v), class: "g-grid" }));
+      const lab = ind.unit === "원" ? Math.round(v).toLocaleString("ko-KR") : ind.unit === "$" ? Math.round(v) : v.toFixed(dec);
+      svg.appendChild(el("text", { x: padL - 6, y: sy(v) + 3.5, "text-anchor": "end", class: "t-tick" }, lab));
+    }
+    EVENTS.forEach(ev => { svg.appendChild(el("line", { x1: sx(ev.i), x2: sx(ev.i), y1: padT - 8, y2: H - padB, class: "g-event" })); svg.appendChild(el("text", { x: sx(ev.i), y: padT - 11, "text-anchor": ev.i >= MONTHS.length - 3 ? "end" : "middle", class: "t-lab", style: "font-size:10px" }, ev.t)); });
+    MONTHS.forEach((m, i) => { if (i % 3 === 0 || i === MONTHS.length - 1) svg.appendChild(el("text", { x: sx(i), y: H - 6, "text-anchor": i === 0 ? "start" : i === MONTHS.length - 1 ? "end" : "middle", class: "t-tick" }, m)); });
+    const pts = []; ind.series.forEach((v, i) => { if (v == null) return; if (ind.step && pts.length) pts.push([sx(i), pts[pts.length - 1][1]]); pts.push([sx(i), sy(v)]); });
+    const li = ind.series.reduce((a, v, i) => v != null ? i : a, 0);
+    svg.appendChild(el("path", { d: "M" + pts[0][0] + "," + (H - padB) + " L" + pts.map(p => p.join(",")).join(" L") + " L" + pts[pts.length - 1][0] + "," + (H - padB) + " Z", class: "lc-ar" }));
+    svg.appendChild(el("path", { d: "M" + pts.map(p => p.join(",")).join(" L"), class: "lc-ln" }));
+    svg.appendChild(el("circle", { cx: sx(li), cy: sy(ind.series[li]), r: 4, class: "lc-dot" }));
+    const cross = el("line", { y1: padT - 4, y2: H - padB, class: "lc-cross", visibility: "hidden" }), hd = el("circle", { r: 4.5, class: "lc-dot", visibility: "hidden" });
+    svg.appendChild(cross); svg.appendChild(hd);
+    const hit = el("rect", { x: padL - 8, y: 0, width: W - padL - padR + 16, height: H, fill: "transparent" }); svg.appendChild(hit);
+    const move = e => {
+      const r = svg.getBoundingClientRect(), x = (e.clientX - r.left) * (W / r.width);
+      let i = Math.round((x - padL) / (W - padL - padR) * (MONTHS.length - 1)); i = Math.max(0, Math.min(MONTHS.length - 1, i)); if (ind.series[i] == null) i = li;
+      cross.setAttribute("x1", sx(i)); cross.setAttribute("x2", sx(i)); cross.setAttribute("visibility", "visible");
+      hd.setAttribute("cx", sx(i)); hd.setAttribute("cy", sy(ind.series[i])); hd.setAttribute("visibility", "visible");
+      const ev = EVENTS.find(v => v.i === i);
+      showTip(hd, "<b>" + esc(M.monthLabels ? M.monthLabels[i] : MONTHS[i]) + " · " + fmtV(ind, ind.series[i]) + "</b>" + (ev ? "<span class=\"k\">" + esc(ev.t) + "</span>" : ""));
+    };
+    hit.addEventListener("pointermove", move); hit.addEventListener("pointerdown", move);
+    hit.addEventListener("pointerleave", () => { hideTip(); cross.setAttribute("visibility", "hidden"); hd.setAttribute("visibility", "hidden"); });
+    host.replaceChildren(svg);
+  }
+  function barChart(host, items) {
+    const W = Math.max(260, host.clientWidth), rowH = 24, padT = 6, labW = 72, padR = 56, padL = 50;
+    const H = padT * 2 + items.length * rowH;
+    const lo = Math.min(0, ...items.map(d => d[1])), hi = Math.max(0, ...items.map(d => d[1]));
+    const x0 = labW + padL, x1 = W - padR, sx = v => x0 + (v - lo) / (hi - lo) * (x1 - x0);
+    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img", "aria-label": "수익률 막대 차트" });
+    svg.appendChild(el("line", { x1: sx(0), x2: sx(0), y1: 0, y2: H, class: "g-zero" }));
+    items.forEach((d, i) => {
+      const y = padT + i * rowH + rowH / 2, xa = sx(0), xb = sx(d[1]), h = 12, r = Math.min(3, Math.abs(xb - xa));
+      svg.appendChild(el("text", { x: 0, y: y + 4, class: "t-lab" }, d[0]));
+      const p = d[1] >= 0 ? "M" + xa + "," + (y - h / 2) + "H" + (xb - r) + "Q" + xb + "," + (y - h / 2) + " " + xb + "," + (y - h / 2 + r) + "V" + (y + h / 2 - r) + "Q" + xb + "," + (y + h / 2) + " " + (xb - r) + "," + (y + h / 2) + "H" + xa + "Z"
+        : "M" + xa + "," + (y - h / 2) + "H" + (xb + r) + "Q" + xb + "," + (y - h / 2) + " " + xb + "," + (y - h / 2 + r) + "V" + (y + h / 2 - r) + "Q" + xb + "," + (y + h / 2) + " " + (xb + r) + "," + (y + h / 2) + "H" + xa + "Z";
+      svg.appendChild(el("path", { d: p, class: d[1] >= 0 ? "bar-p" : "bar-n" }));
+      svg.appendChild(el("text", { x: d[1] >= 0 ? xb + 5 : xb - 5, y: y + 4, "text-anchor": d[1] >= 0 ? "start" : "end", class: "t-val" }, pct(d[1])));
+    });
+    host.replaceChildren(svg);
+  }
+
+  // ---------- macro dashboard ----------
+  const scoresEl = document.getElementById("scores"), mx = document.getElementById("mx"), mxDetail = document.getElementById("mx-detail");
+  const mstate = { ind: INDS[0].id, g: null, focus: null };
+  const dots = v => "●".repeat(Math.abs(v)) + "○".repeat(3 - Math.abs(v));
+  const verdict = s => s >= 3 ? "순풍" : s >= 1 ? "약한 순풍" : s === 0 ? "중립" : s >= -2 ? "약한 역풍" : s >= -4 ? "역풍" : "강한 역풍";
+  const SCORE = {}; GROUPS.forEach(g => SCORE[g.k] = INDS.reduce((a, ind) => a + ind.cells[g.k][0], 0));
+  const maxAbs = Math.max(6, ...Object.values(SCORE).map(Math.abs));
+  scoresEl.innerHTML = GROUPS.map(g => {
+    const s = SCORE[g.k], w = Math.abs(s) / maxAbs * 50;
+    return "<button type=\"button\" class=\"score\" data-g=\"" + g.k + "\" aria-pressed=\"false\"><div class=\"row1\"><span class=\"gname\">" + esc(g.n) + "</span><span class=\"sv " + cls(s) + "\">" + (s > 0 ? "+" : s < 0 ? "−" : "") + Math.abs(s) + "</span></div>" +
+      "<div class=\"bar\"><i class=\"" + (s >= 0 ? "p" : "n") + "\" style=\"" + (s >= 0 ? "left:50%" : "right:50%") + ";width:" + w + "%\"></i><b></b></div><span class=\"verd\">" + verdict(s) + " · 클릭하면 이 열만 강조</span></button>";
+  }).join("");
+  scoresEl.querySelectorAll(".score").forEach(b => {
+    const g = b.dataset.g;
+    b.addEventListener("mouseenter", () => {
+      const ups = INDS.filter(i => i.cells[g][0] > 0).map(i => i.n + " (+" + i.cells[g][0] + ")"), downs = INDS.filter(i => i.cells[g][0] < 0).map(i => i.n + " (" + i.cells[g][0] + ")");
+      showTip(b, "<b>" + esc(GROUPS.find(x => x.k === g).n) + " 합계 " + SCORE[g] + "</b><span>" + tagHtml("up") + " " + esc(ups.join(", ") || "없음") + "</span><span>" + tagHtml("down") + " " + esc(downs.join(", ") || "없음") + "</span>");
+    });
+    b.addEventListener("mouseleave", hideTip);
+    b.addEventListener("click", () => { mstate.focus = mstate.focus === g ? null : g; renderMx(); });
+  });
+  function renderMx() {
+    scoresEl.querySelectorAll(".score").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.g === mstate.focus)));
+    mx.classList.toggle("focus-col", !!mstate.focus);
+    mx.innerHTML = "<thead><tr><th>지표</th><th>현재</th><th>추이</th>" + GROUPS.map(g => "<th class=\"g\">" + esc(g.n) + "</th>").join("") + "</tr></thead><tbody>" +
+      INDS.map(ind => "<tr class=\"" + (ind.id === mstate.ind ? "sel" : "") + "\"><td><button type=\"button\" class=\"ind\" data-ind=\"" + ind.id + "\"><b>" + esc(ind.n) + "</b><span>" + esc(ind.dir) + "</span></button></td>" +
+        "<td class=\"now\">" + esc(ind.now) + "<small>" + esc(ind.nowSub) + "</small></td>" +
+        "<td>" + (ind.series ? sparkline(ind) : "<span class=\"foot\">" + (ind.bars ? "막대 보기" : "통계 보기") + "</span>") + "</td>" +
+        GROUPS.map(g => { const v = ind.cells[g.k][0], t = sgn(v); return "<td class=\"c" + (mstate.focus === g.k ? " fc" : "") + "\"><button type=\"button\" class=\"mxc" + (ind.id === mstate.ind && mstate.g === g.k ? " on" : "") + "\" data-ind=\"" + ind.id + "\" data-g=\"" + g.k + "\" data-v=\"" + v + "\" aria-label=\"" + esc(ind.n) + ", " + esc(g.n) + ": " + TAGTXT[t] + "\"><span class=\"tg\">" + TAGTXT[t] + "</span><span class=\"dots\">" + dots(v) + "</span></button></td>"; }).join("") + "</tr>").join("") + "</tbody>";
+  }
+  mx.addEventListener("mouseover", e => {
+    const b = e.target.closest(".mxc"); if (!b) return;
+    const ind = INDS.find(i => i.id === b.dataset.ind), g = GROUPS.find(x => x.k === b.dataset.g), c = ind.cells[g.k];
+    showTip(b, "<b>" + esc(ind.n) + " → " + esc(g.n) + "</b><span>" + tagHtml(sgn(c[0])) + " 강도 " + dots(c[0]) + "</span><span>" + esc(c[1]) + "</span><span class=\"k\">클릭하면 추이와 근거</span>");
+  });
+  mx.addEventListener("mouseout", e => { if (e.target.closest(".mxc")) hideTip(); });
+  mx.addEventListener("click", e => { const b = e.target.closest("[data-ind]"); if (!b) return; mstate.ind = b.dataset.ind; mstate.g = b.dataset.g || null; renderMx(); renderMxDetail(true); });
+  function renderMxDetail(scroll) {
+    const ind = INDS.find(i => i.id === mstate.ind), focusG = mstate.g ? GROUPS.find(x => x.k === mstate.g) : null;
+    mxDetail.innerHTML = "<div class=\"d-head\"><div class=\"t\"><span class=\"eyebrow\">선택한 지표" + (focusG ? " · " + esc(focusG.n) : "") + "</span><h3>" + esc(ind.n) + " · " + esc(ind.now) + "</h3><span class=\"sub\">" + esc(ind.dir) + " · " + esc(ind.nowSub) + "</span></div>" +
+      (focusG ? tagHtml(sgn(ind.cells[focusG.k][0])) : "") + "</div>" +
+      "<div class=\"d-grid\">" +
+        "<div class=\"d-col\"><h4>" + esc(ind.series ? ind.chartTitle + " · 마우스로 월별 값" : ind.bars ? (ind.barsTitle || "수익률") : "핵심 숫자") + "</h4><div class=\"dchart\" id=\"mx-chart\"></div></div>" +
+        "<div class=\"d-col\"><h4>전달 경로</h4>" + pathHtml(ind.path) + "<h4>테마별 영향</h4><div class=\"grp-eff\">" +
+          GROUPS.map(g => { const c = ind.cells[g.k]; return "<div class=\"r\"" + (focusG && focusG.k === g.k ? " style=\"background:var(--accent-wash);border-radius:6px;padding:4px\"" : "") + "><span class=\"n\">" + esc(g.n) + "</span><span>" + tagHtml(sgn(c[0])) + " <span class=\"num\" style=\"font-size:11px\">" + dots(c[0]) + "</span></span><p>" + esc(c[1]) + "</p></div>"; }).join("") + "</div></div>" +
+        "<div class=\"d-col\"><h4>근거</h4>" + casesHtml(ind.cases) + "<h4>다음에 볼 것</h4><p class=\"note\">" + esc(ind.next) + "</p></div>" +
+      "</div>";
+    const host = document.getElementById("mx-chart");
+    if (ind.series) lineChart(host, ind);
+    else if (ind.bars) barChart(host, ind.bars);
+    else host.innerHTML = "<div class=\"stat-grid\">" + (ind.stats || []).map(s => "<div class=\"stat\"><b>" + esc(s[0]) + "</b><span>" + esc(s[1]) + "</span></div>").join("") + "</div>";
+    if (scroll) { const r = mxDetail.getBoundingClientRect(); if (r.top > innerHeight * 0.75) mxDetail.scrollIntoView({ behavior: RM, block: "nearest" }); }
+  }
+  renderMx(); renderMxDetail(false);
+
+  // ---------- heatmap ----------
+  const H = D.heatmap, COLS = H.cols, HM = H.bands;
+  HM.forEach(b => b.rows.forEach(r => { if (r.ref) { const ind = INDS.find(x => x.id === r.ref); if (ind) { if (!r.path) r.path = ind.path; if (!r.cases) r.cases = ind.cases; } } }));
+  const hm = document.getElementById("hm"), hmDetail = document.getElementById("hm-detail");
+  const GLYPH = { "2": "++", "1": "+", "0": "·", "-1": "−", "-2": "−−" };
+  const LABEL = v => v >= 2 ? "강한 상승기여" : v === 1 ? "상승기여" : v === 0 ? "영향 작음" : v === -1 ? "하락원인으로예상" : "강한 하락원인으로예상";
+  const hstate = { b: 0, r: 0, c: null };
+  const groupSpans = []; COLS.forEach(c => { const last = groupSpans[groupSpans.length - 1]; if (last && last.g === c.g) last.n++; else groupSpans.push({ g: c.g, n: 1 }); });
+  function renderHm() {
+    let h = "<thead><tr><th></th>" + groupSpans.map(s => "<th class=\"grp\" colspan=\"" + s.n + "\">" + esc(s.g) + "</th>").join("") + "</tr><tr><th></th>" + COLS.map(c => "<th scope=\"col\">" + esc(c.n) + "</th>").join("") + "</tr></thead><tbody>";
+    HM.forEach((b, bi) => {
+      h += "<tr><th class=\"band\" colspan=\"" + (COLS.length + 1) + "\">" + esc(b.band) + "</th></tr>";
+      b.rows.forEach((r, ri) => {
+        const sel = hstate.b === bi && hstate.r === ri;
+        h += "<tr class=\"" + (sel ? "sel" : "") + "\"><th class=\"rowh\" scope=\"row\"><button type=\"button\" data-b=\"" + bi + "\" data-r=\"" + ri + "\">" + esc(r.n) + "</button></th>" +
+          r.v.map((v, ci) => "<td tabindex=\"0\" data-v=\"" + v + "\" data-b=\"" + bi + "\" data-r=\"" + ri + "\" data-c=\"" + ci + "\" class=\"" + (sel && hstate.c === ci ? "on" : "") + "\" aria-label=\"" + esc(r.n) + ", " + esc(COLS[ci].n) + ": " + LABEL(v) + "\">" + GLYPH[v] + "</td>").join("") + "</tr>";
+      });
+    });
+    hm.innerHTML = h + "</tbody>";
+  }
+  function renderHmDetail(scroll) {
+    const r = HM[hstate.b].rows[hstate.r], c = hstate.c != null ? COLS[hstate.c] : null;
+    const groups = { up: [], down: [], mid: [] };
+    r.v.forEach((v, i) => groups[sgn(v)].push("<span class=\"chip\">" + esc(COLS[i].g) + " · " + esc(COLS[i].n) + "<b>" + GLYPH[v] + "</b></span>"));
+    hmDetail.innerHTML = "<div class=\"d-head\"><div class=\"t\"><span class=\"eyebrow\">" + esc(HM[hstate.b].band) + (c ? " · " + esc(c.g) + " " + esc(c.n) : "") + "</span><h3>" + esc(r.n) + "</h3><span class=\"sub\">" + esc(r.why) + "</span></div>" +
+      (c ? "<span>" + tagHtml(sgn(r.v[hstate.c])) + " <span class=\"num\" style=\"font-size:12px\">" + esc(c.n) + " " + GLYPH[r.v[hstate.c]] + "</span></span>" : "") + "</div>" +
+      "<div class=\"d-grid\">" +
+        "<div class=\"d-col\"><h4>전달 경로</h4>" + pathHtml(r.path) + "</div>" +
+        "<div class=\"d-col\"><h4>구간별 영향</h4><div class=\"effects\">" +
+          (groups.up.length ? "<div class=\"eff\">" + tagHtml("up") + "<div class=\"chips\">" + groups.up.join("") + "</div></div>" : "") +
+          (groups.down.length ? "<div class=\"eff\">" + tagHtml("down") + "<div class=\"chips\">" + groups.down.join("") + "</div></div>" : "") +
+          (groups.mid.length ? "<div class=\"eff\"><span class=\"tag mid\">영향 작음</span><div class=\"chips\">" + groups.mid.join("") + "</div></div>" : "") +
+        "</div>" + (r.note ? "<p class=\"note\">" + esc(r.note) + "</p>" : "") + "</div>" +
+        "<div class=\"d-col\"><h4>근거</h4>" + casesHtml(r.cases) + "</div>" +
+      "</div>";
+    if (scroll) { const rr = hmDetail.getBoundingClientRect(); if (rr.top > innerHeight * 0.75) hmDetail.scrollIntoView({ behavior: RM, block: "nearest" }); }
+  }
+  hm.addEventListener("mouseover", e => {
+    const td = e.target.closest("td[data-v]"); if (!td) return;
+    const r = HM[+td.dataset.b].rows[+td.dataset.r], v = +td.dataset.v, c = COLS[+td.dataset.c];
+    showTip(td, "<b>" + esc(r.n) + "</b><span class=\"k\">" + esc(c.g) + " · " + esc(c.n) + "</span><span>" + tagHtml(sgn(v)) + " " + LABEL(v) + "</span><span>" + esc(r.why) + "</span><span class=\"k\">클릭하면 세부 근거</span>");
+  });
+  hm.addEventListener("mouseout", e => { if (e.target.closest("td[data-v]")) hideTip(); });
+  const pickHm = (elx, scroll) => { hstate.b = +elx.dataset.b; hstate.r = +elx.dataset.r; hstate.c = elx.dataset.c != null ? +elx.dataset.c : null; renderHm(); renderHmDetail(scroll); };
+  hm.addEventListener("click", e => { const elx = e.target.closest("td[data-v], th.rowh button"); if (elx) { hideTip(); pickHm(elx, true); } });
+  hm.addEventListener("keydown", e => { const td = e.target.closest("td[data-v]"); if (td && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pickHm(td, true); } });
+  renderHm(); renderHmDetail(false);
+
+  // ---------- sources ----------
+  THEMES.forEach(t => t.stages.forEach(s => { s.co.forEach(c => (c.s || []).forEach(k => usedSrc.add(k))); (s.cases || []).forEach(c => (c.s || []).forEach(k => usedSrc.add(k))); }));
+  INDS.forEach(i => (i.cases || []).forEach(c => (c.s || []).forEach(k => usedSrc.add(k))));
+  HM.forEach(b => b.rows.forEach(r => (r.cases || []).forEach(c => (c.s || []).forEach(k => usedSrc.add(k)))));
+  (D.extraSources || []).forEach(k => usedSrc.add(k));
+  document.getElementById("src-list").innerHTML = [...usedSrc].filter(k => SRC[k]).map(k => "<li><a href=\"" + esc(SRC[k][1]) + "\" target=\"_blank\" rel=\"noopener\">" + esc(SRC[k][0]) + "</a></li>").join("");
+
+  let lastDW = mxDetail.clientWidth;
+  new ResizeObserver(() => { if (mxDetail.clientWidth === lastDW) return; lastDW = mxDetail.clientWidth; renderMxDetail(false); }).observe(mxDetail);
+})();
+</script>
