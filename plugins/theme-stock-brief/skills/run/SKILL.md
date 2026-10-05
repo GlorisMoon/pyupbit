@@ -14,6 +14,13 @@ description: 한국·미국 AI·양자·로봇 밸류체인 주간 분석을 실
 - 인자: `kr`, `us`, `all`(기본). 설정은 `data/config.json` (아티팩트 URL, 브랜치, 메일 제목).
 - 먼저 `references/methodology.md`(태그·점수 규칙)와 `references/data-sources.md`(도구별 사용법과 제약)를 읽습니다.
 
+## 0. 도구가 없을 때
+
+- 작업 폴더에 `pyupbit` 저장소가 없으면 `add_repo`(owner `glorismoon`, repo `pyupbit`, access `push`)로 추가하고 안내된 대로 clone 합니다.
+- Zacks·FMP·Alpha Vantage 도구가 없으면 WebSearch로 대표 종목(엔비디아·마이크론·아이온큐·테슬라 등)과 미국 10년물 금리만 갱신하고, `meta.asOf`에 "웹 검색 기준"이라고 적습니다. 갱신하지 못한 종목은 그대로 둡니다.
+- Gmail 도구가 없으면 초안 대신 `out/email.html` 경로를 보고합니다.
+- 어떤 도구가 없었는지는 마지막 보고에 반드시 적습니다.
+
 ## 1. 준비
 
 ```bash

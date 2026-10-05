@@ -7,7 +7,7 @@
   "schedule": {
     "description": "매주 월요일 06:49 (Asia/Seoul)",
     "cron": "CRON_TZ=Asia/Seoul 49 6 * * 1",
-    "triggerId": ""
+    "triggerId": "trig_01T44wU3jsCLsmyg6y1JcgWX"
   },
   "email": {
     "subjectPrefix": "[주간] AI·양자·로봇 테마 브리핑",
